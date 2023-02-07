@@ -1,11 +1,11 @@
 //Choc sensor configuration
 int valeur=0;
 const int buttonPin = 13;     // the number of the pushbutton pin
-#define DEEP_SLEEP_TIME 1
+const int buttonPin1 = 36;     // the number of the pushbutton pin
 
+#define DEEP_SLEEP_TIME 0.2
 
 //End of choc sensor configuration
-
 
 // Implemented libraries in this project
 #include <TinyGPS++.h>  
@@ -26,9 +26,9 @@ TinyGPSPlus gps;
 // The serial connection to the GPS device
 SoftwareSerial ss(RXPin, TXPin);
 // WiFi
-const char* ssid = "khalillaptop";// Your personal network SSID
-const char* wifi_password = "13092000"; 
-const char* mqtt_server = "192.168.137.205";  // IP of the MQTT broker
+const char* ssid = "Choufli7al_Ext";// Your personal network SSID
+const char* wifi_password = "24342442"; 
+const char* mqtt_server = "192.168.1.29";  // IP of the MQTT broker
 const char* gps_topic = "gps";
 const char* cardio_topic = "cardio";
 const char* lspi_topic = "lspi";
@@ -93,6 +93,8 @@ ss.begin(GPSBaud);
 pinMode(heartbeat, INPUT);
 pinMode(stopbutton, INPUT);
 pinMode(buttonPin, INPUT);
+pinMode(buttonPin1, INPUT);
+
 
 
 
@@ -111,8 +113,12 @@ connect_MQTT();
 
 bool value(){
     bool buttonState = digitalRead(buttonPin);
-    bool ml=false;
+        bool buttonState1 = digitalRead(buttonPin1);
+
       if (buttonState == HIGH) {
+                valeur++;
+      }
+      if (buttonState1 == HIGH) {
                 valeur++;
       }
       if (valeur>0){
@@ -120,7 +126,6 @@ bool value(){
       }
 
     
-
 
 
 }
@@ -133,13 +138,13 @@ void loop ()
   if (ss.available() > 0){
         gps.encode(ss.read());
   if (gps.location.isUpdated()){
-    Serial.println("************");
+    Serial.println("**********");
     Serial.println("Stop Button status");
     int a=0;digitalRead(stopbutton);
     Serial.println(a);
-    Serial.println("************");
+    Serial.println("**********");
     
- Serial.println("************"); 
+ Serial.println("**********"); 
  Serial.println("GPS DATA"); 
 
   float lat=gps.location.lat();
@@ -152,16 +157,16 @@ void loop ()
   Serial.print("Latitude="); 
   Serial.println(lat, 6);
   Serial.print("Longitude="); 
-  Serial.println(log, 6);
+  Serial.println(log,6);
 
-    Serial.println("*******"); 
+    Serial.println("*****"); 
     Serial.println("heartbeat"); 
     int mono= analogRead(heartbeat); 
     Serial.println(mono);
     String cardiact=String(a);
-    Serial.println("*******"); 
+    Serial.println("*****"); 
     delay(3000);
-    String lspi_text= lats+ "\n" +logs+"\n"+cardiact;
+    String lspi_text=lats+" "+logs+" "+cardiact;
     Serial.println(lspi_text);
     if (client.publish(lspi_topic, String(lspi_text).c_str())) {
     Serial.println("All the data have been send!");
